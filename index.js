@@ -4,13 +4,20 @@ const { ServerResponse } = require('http')
 const fp = require('fastify-plugin')
 const WebSocket = require('ws')
 
-const kWs = Symbol('ws-socket')
-const kWsHead = Symbol('ws-head')
+/** PERMIT TO OVERRIDE kWs SYMBOLS [Symbols are unique and not replicable ]**/
+let kWs = Symbol('ws-socket')
+let kWsHead = Symbol('ws-head')
 
 function fastifyWebsocket (fastify, opts, next) {
+  
   fastify.decorateRequest('ws', null)
 
   let errorHandler = defaultErrorHandler
+  if (opts.kWs)
+    kWs = opts.kWs;
+  if (opts.kWsHead)
+    kWsHead = opts.kWsHead;
+
   if (opts.errorHandler) {
     if (typeof opts.errorHandler !== 'function') {
       return next(new Error('invalid errorHandler function'))
